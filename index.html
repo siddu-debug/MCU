@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Wish For You!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            overflow: hidden; /* Prevents scrollbars from the elements */
+        }
+        /* Custom font for the main heading */
+        .font-pacifico {
+            font-family: 'Pacifico', cursive;
+        }
+        /* Custom font for the body text */
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Container for all floating elements */
+        #animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; /* Allows clicking through the container */
+            z-index: 0;
+        }
+        /* Base class for all animated elements */
+        .animated-element {
+            position: absolute;
+            opacity: 0; /* Start invisible, fade in with JS */
+            will-change: transform; /* Performance optimization */
+        }
+
+        /* Keyframe animation for the initial, gentle stars */
+        @keyframes gentle-float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Keyframe animation for the more dynamic celebration elements */
+        @keyframes celebration-float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-150px) translateX(0px) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) translateX(0) rotate(360deg);
+                opacity: 0.8;
+            }
+        }
+        
+        /* Animation for the photo appearing */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .pop-in {
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+    </style>
+</head>
+<body class="bg-indigo-100 font-poppins text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Container for floating elements, will be populated by JavaScript -->
+    <div id="animation-container"></div>
+
+    <!-- Main container for the wish, with a higher z-index to be on top of elements -->
+    <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-10 max-w-2xl w-full text-center z-10">
+
+        <!-- Main Heading -->
+        <h1 class="font-pacifico text-4xl md:text-6xl text-indigo-500 mb-4">
+            Happy Birthday Bhavana!
+        </h1>
+
+        <!-- Personal Message -->
+        <p class="text-lg md:text-xl text-gray-600 mb-6">
+            Wishing you a day as bright as the stars and as special as you are. Thank you for being such an incredible friend.
+        </p>
+
+        <!-- Photo of you and your friend - initially hidden -->
+        <div id="photoContainer" class="my-8 hidden">
+             <img 
+                src="C:\Users\Admin\Downloads\1679645914885.jpg"
+                alt="A special moment" 
+                class="rounded-full w-48 h-48 md:w-64 md:h-64 object-cover mx-auto border-8 border-indigo-200 shadow-lg"
+                onerror="this.onerror=null;this.src='https://placehold.co/400x400/818CF8/FFFFFF?text=Image+Error';"
+            >
+            <!-- IMPORTANT: To add your own photo, replace the 'src' value above with the URL of your image. -->
+        </div>
+        
+        <!-- Closing Wish -->
+        <p class="text-lg md:text-xl font-semibold text-gray-700 mb-8">
+            Cheers to you on your special day! 🥂
+        </p>
+
+        <!-- Interactive Button -->
+        <button id="revealButton" class="bg-indigo-500 text-white font-bold py-3 px-6 rounded-full hover:bg-indigo-600 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75 transform hover:scale-110">
+            Click for your surprise!
+        </button>
+
+    </div>
+
+    <script>
+        // Get the necessary elements from the DOM
+        const revealButton = document.getElementById('revealButton');
+        const photoContainer = document.getElementById('photoContainer');
+        const animationContainer = document.getElementById('animation-container');
+
+        // Define symbols and colors
+        const starSymbols = ['&#10022;', '&#10024;', '&#10038;'];
+        const celebrationSymbols = ['&#10022;', '&#10024;', '&#127881;', '&#127880;', '&#127874;', '&#10042;'];
+        const colors = ['#fde047', '#f9a8d4', '#a78bfa', '#7dd3fc', '#86efac', '#fca5a5'];
+
+        // Function to create the initial gentle stars on page load
+        function createInitialStars() {
+            const numberOfStars = 30;
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('animated-element');
+                
+                star.innerHTML = starSymbols[Math.floor(Math.random() * starSymbols.length)];
+                star.style.color = colors[Math.floor(Math.random() * colors.length)];
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.fontSize = `${Math.random() * 1 + 0.5}rem`;
+                
+                const animationDuration = Math.random() * 15 + 10; // 10 to 25 seconds
+                const animationDelay = Math.random() * 10;
+                star.style.animation = `gentle-float ${animationDuration}s infinite linear ${animationDelay}s`;
+                
+                animationContainer.appendChild(star);
+            }
+        }
+
+        // Function to create the big celebration elements on button click
+        function createCelebrationElements() {
+            const numberOfElements = 80;
+            for (let i = 0; i < numberOfElements; i++) {
+                const element = document.createElement('div');
+                element.classList.add('animated-element');
+                
+                element.innerHTML = celebrationSymbols[Math.floor(Math.random() * celebrationSymbols.length)];
+                element.style.color = colors[Math.floor(Math.random() * colors.length)];
+                element.style.left = `${Math.random() * 100}vw`;
+                element.style.top = `${Math.random() * 100}vh`;
+                element.style.fontSize = `${Math.random() * 1.5 + 0.75}rem`;
+                
+                const animationDuration = Math.random() * 10 + 8; // 8 to 18 seconds
+                const animationDelay = Math.random() * 2;
+                element.style.animation = `celebration-float ${animationDuration}s infinite linear ${animationDelay}s alternate`;
+                 
+                setTimeout(() => {
+                    element.style.opacity = '0.8';
+                }, animationDelay * 1000);
+
+                animationContainer.appendChild(element);
+            }
+        }
+
+        // Event listener for the button click
+        revealButton.addEventListener('click', () => {
+            photoContainer.classList.remove('hidden');
+            photoContainer.classList.add('pop-in');
+            createCelebrationElements();
+            revealButton.style.display = 'none';
+        }, { once: true });
+
+        // Create the initial stars when the page loads
+        createInitialStars();
+    </script>
+
+</body>
+</html>
